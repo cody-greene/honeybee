@@ -1,0 +1,18 @@
+{
+  "name": "@cody-greene/request",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {"node": "^4.4.0", "npm": "^3.0.0"},
+  "main": "lib/index.js",
+  "browser": "lib/browser.js",
+  "eslintConfig": {
+    "root": true,
+    "extends": "./node_modules/eslint-config/strict.yml"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint-config": "cody-greene/eslint-config#v2.2.1",
+    "mocha": "~2.4.5",
+    "nock": "5.4.0"
+  }
+}
