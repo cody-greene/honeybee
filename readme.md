@@ -60,12 +60,13 @@ myRequest({url})
 * @param {number?} opt.low (default: 200) Initial retry delay in milliseconds
 * @param {number?} opt.high (default: 1000) Maximum retry delay between attempts
 * @param {number?} opt.total (default: 5) Number of connection attempts before giving up
-* @param {function|string?} opt.serialize(req) (default: "json") Built-in: "json", "form"
+* @param {function|string?} [opt.serialize(req)](#serializers--parsers) (default: "json")
+  * "json" => "application/json"
+  * "form" => "application/x-www-form-urlencoded"
 * @param {function?} opt.parseResponse(res) res.body is a string (browser) or a Buffer (node)
 * @param {function?} opt.parseError(res)
 
 #### Browser-only options
-* @param {boolean?} opt.fresh If true, then ignore the browser cache
 * @param {bool} opt.withCredentials Enable cross-origin cookies
 * @param {function?} opt.onProgress(percent) 0-50: upload, 50-100: download
 
@@ -74,6 +75,10 @@ myRequest({url})
 * @param {number?} opt.timeout (default: 60e3) Total time before giving up
 * @param {number?} opt.maxRedirects (default: 5)
 * @param {bool} opt.gzip Compress the request body
+
+#### Serializers & Parsers
+- See `lib/helpers.js#serializeJSON` for the default serializer implementation
+- See `lib/helpers.js#parseJSONResponse` for the default response parser
 
 #### AuthorizationAgent
 ```javascript
@@ -103,8 +108,8 @@ import request, {RequestError, parseJSON} from '@cody-greene/request'
 request({
   method: 'POST',
   uri: 'https://www.googleapis.com/oauth2/v3/token',
-  // Encode the request as 'application/x-www-form-urlencoded'
-  serializer: 'form',
+  // Encode the request as
+  serialize: 'form',
   body: {
     refresh_token: refreshToken,
     client_id: CLIENT_ID,
