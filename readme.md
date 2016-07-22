@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/cody-greene/node-request.svg?branch=master)](https://travis-ci.org/cody-greene/node-request)
+
 Minimal dependency http(s) library for node & modern browsers with:
 - exponential backoff/retry
 - configurable error parsing
