@@ -1,18 +1,21 @@
 {
   "name": "@cody-greene/request",
-  "version": "1.0.0",
-  "private": true,
-  "engines": {"node": "^4.4.0", "npm": "^3.0.0"},
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {"node": ">=4.4.0", "npm": "^3.0.0"},
   "main": "lib/index.js",
   "browser": "lib/browser.js",
+  "files": ["lib/"],
   "eslintConfig": {
     "root": true,
-    "extends": "./node_modules/eslint-config/strict.yml"
+    "extends": "./node_modules/@cody-greene/eslint-config/strict.yml"
   },
-  "dependencies": {},
+  "scripts": {
+    "test-watch": "mocha -bwR min",
+    "test": "mocha -bR tap"
+  },
   "devDependencies": {
-    "eslint-config": "cody-greene/eslint-config#v2.2.1",
-    "mocha": "~2.4.5",
-    "nock": "5.4.0"
+    "@cody-greene/eslint-config": "2.13.0",
+    "mocha": "~2.4.5"
   }
 }
