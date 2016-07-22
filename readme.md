@@ -52,28 +52,28 @@ myRequest({url})
 ```
 
 #### Common options
-@param {string} opt.method GET, PUT, PATCH, POST, DELETE
-@param {string} opt.url
-@param {object?} opt.headers e.g. Content-Type, Request-Id
-@param {object?} opt.body Encoded as one of util.CONTENT_TYPES
-@param {object?} opt.query Will be serialized as the url query string
-@param {number?} opt.low (default: 200) Initial retry delay in milliseconds
-@param {number?} opt.high (default: 1000) Maximum retry delay between attempts
-@param {number?} opt.total (default: 5) Number of connection attempts before giving up
-@param {function|string?} opt.serialize(req) (default: "json") Built-in: "json", "form"
-@param {function?} opt.parseResponse(res) res.body is a string (browser) or a Buffer (node)
-@param {function?} opt.parseError(res)
+* @param {string} opt.method GET, PUT, PATCH, POST, DELETE
+* @param {string} opt.url
+* @param {object?} opt.headers e.g. Content-Type, Request-Id
+* @param {object?} opt.body Encoded as one of util.CONTENT_TYPES
+* @param {object?} opt.query Will be serialized as the url query string
+* @param {number?} opt.low (default: 200) Initial retry delay in milliseconds
+* @param {number?} opt.high (default: 1000) Maximum retry delay between attempts
+* @param {number?} opt.total (default: 5) Number of connection attempts before giving up
+* @param {function|string?} opt.serialize(req) (default: "json") Built-in: "json", "form"
+* @param {function?} opt.parseResponse(res) res.body is a string (browser) or a Buffer (node)
+* @param {function?} opt.parseError(res)
 
 #### Browser-only options
-@param {boolean?} opt.fresh If true, then ignore the browser cache
-@param {bool} opt.withCredentials Enable cross-origin cookies
-@param {function?} opt.onProgress(percent) 0-50: upload, 50-100: download
+* @param {boolean?} opt.fresh If true, then ignore the browser cache
+* @param {bool} opt.withCredentials Enable cross-origin cookies
+* @param {function?} opt.onProgress(percent) 0-50: upload, 50-100: download
 
 #### Node-only options
-@param {[AuthorizationAgent](#AuthorizationAgent)?} opt.auth
-@param {number?} opt.timeout (default: 60e3) Total time before giving up
-@param {number?} opt.maxRedirects (default: 5)
-@param {bool} opt.gzip Compress the request body
+* @param {[AuthorizationAgent](#AuthorizationAgent)?} opt.auth
+* @param {number?} opt.timeout (default: 60e3) Total time before giving up
+* @param {number?} opt.maxRedirects (default: 5)
+* @param {bool} opt.gzip Compress the request body
 
 #### AuthorizationAgent
 ```javascript
