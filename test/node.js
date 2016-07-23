@@ -1,4 +1,4 @@
-'use strict' /* eslint-env mocha, node, es6 */
+'use strict'
 const assert = require('assert')
 const zlib = require('zlib')
 const request = require('../lib/index')

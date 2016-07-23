@@ -87,7 +87,7 @@ class AuthorizationAgent {
    * Called (once) in the event of a 401 statusCode
    * Use this to fetch a new access token for .toHeader()
    * @function refresh(opt, done)
-   * @param {object} opt Current request options, including headers
+   * @param {object} req Current request options, including headers
    * @param {function} done(err)
    * @return {function} abort()
    */

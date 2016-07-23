@@ -1,4 +1,3 @@
-/* eslint-env mocha, node, es6 */
 'use strict'
 const util = require('../lib/helpers')
 const assert = require('assert')

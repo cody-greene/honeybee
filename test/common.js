@@ -1,4 +1,4 @@
-'use strict' /* eslint-env mocha, node, es6 */
+'use strict'
 const assert = require('assert')
 
 module.exports = function declareWith(server, request) {

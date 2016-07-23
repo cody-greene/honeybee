@@ -1,4 +1,3 @@
-/* eslint-env mocha, node, es6 */
 'use strict'
 const assert = require('assert')
 const request = require('../lib/browser')

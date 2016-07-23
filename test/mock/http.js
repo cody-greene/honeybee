@@ -1,4 +1,4 @@
-'use strict' /* eslint-env node, es6 */
+'use strict'
 const http = require('http')
 const util = require('../../lib/helpers')
 

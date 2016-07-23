@@ -1,4 +1,4 @@
-'use strict' /* eslint-env node, es6 */
+'use strict'
 const parseUrl = require('url').parse
 let GLOBAL_REQUEST_HANDLER = null
 
