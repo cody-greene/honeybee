@@ -2,6 +2,7 @@
   "name": "@cody-greene/request",
   "version": "0.1.0",
   "license": "MIT",
+  "repository": "cody-greene/node-request",
   "engines": {"node": ">=4.4.0", "npm": "^3.0.0"},
   "main": "lib/index.js",
   "browser": "lib/browser.js",
