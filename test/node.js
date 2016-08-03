@@ -33,7 +33,7 @@ describe('node (unique)', function () {
     let expectedString = JSON.stringify(expected)
     server.setHandler(function (req, res) {
       assert.equal(req.headers['content-encoding'], 'gzip')
-      assert.notEqual(req.headers['content-length'], expectedString.length)
+      assert.equal(req.headers['content-length'], 59)
       req.body = zlib.gunzipSync(req.body).toString('utf8')
       assert.equal(req.body, expectedString)
       res.send(204)

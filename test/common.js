@@ -103,6 +103,7 @@ module.exports = function declareWith(server, request) {
 
   it('supports custom headers', function (done) {
     server.setHandler(function (req, res) {
+      assert.equal(req.headers['content-length'], null)
       assert.equal(req.headers['request-id'], '2e2e2e', 'got user-defined header')
       assert.equal(req.headers['x-cursed-love'], 'Hexed Lust', 'header names are case insensitive')
       res.send(204)
@@ -140,8 +141,9 @@ module.exports = function declareWith(server, request) {
     })
     request({
       url: server.origin,
-      parseResponse: function (res) {
+      parseResponse: function (req, res) {
         // TODO return Error
+        assert.equal(typeof req.headers, 'object')
         assert.equal(res.statusCode, 200)
         assert.equal(res.headers['content-type'], 'text/plain;charset=utf-8')
         assert.equal(res.body.toString(), 'electric feel')
@@ -161,7 +163,7 @@ module.exports = function declareWith(server, request) {
     })
     request({
       url: server.origin,
-      parseError: function (res) {
+      parseError: function (req, res) {
         assert.equal(res.statusCode, 404)
         assert.equal(res.headers['content-type'], 'text/plain;charset=utf-8')
         assert.equal(res.body.toString(), 'where is it?')

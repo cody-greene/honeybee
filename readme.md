@@ -18,6 +18,9 @@ let cancel = request({url}, function (err, res) {
   if (err) console.warn(err.statusCode, err.stack)
   else console.log(res)
 })
+
+// Immediately abort the XHR or the node http request
+// The callback will not be invoked
 cancel()
 ```
 
@@ -32,7 +35,7 @@ request({url})
 #### Bound Promise
 ```javascript
 const Promise = require('bluebird')
-const request = require('@cody-greene/request').withBinding(Promise)
+const request = require('@cody-greene/request').withBindings(Promise)
 request({url})
   .then(res => console.log(res))
   .catch(err => console.warn(err.statusCode, err.stack))
@@ -52,19 +55,24 @@ myRequest({url})
 ```
 
 #### Common options
-* @param {string} opt.method GET, PUT, PATCH, POST, DELETE
 * @param {string} opt.url
+* @param {string?} opt.method GET, PUT, PATCH, POST, DELETE
 * @param {object?} opt.headers e.g. Content-Type, Request-Id
 * @param {object?} opt.body Encoded as one of util.CONTENT_TYPES
 * @param {object?} opt.query Will be serialized as the url query string
 * @param {number?} opt.low (default: 200) Initial retry delay in milliseconds
 * @param {number?} opt.high (default: 1000) Maximum retry delay between attempts
 * @param {number?} opt.total (default: 5) Number of connection attempts before giving up
-* @param {function|string?} [opt.serialize(req)](#serializers--parsers) (default: "json")
-  * "json" => "application/json"
-  * "form" => "application/x-www-form-urlencoded"
-* @param {function?} opt.parseResponse(res) res.body is a string (browser) or a Buffer (node)
-* @param {function?} opt.parseError(res)
+* @param {function|string?} opt.serialize(req) Should convert `req.body` to a string or Buffer for transport and set `req.headers['content-type']` as appropriate
+  - "json" => "application/json" (default)
+  - "form" => "application/x-www-form-urlencoded"
+  - "noop"
+* @param {function|string?} opt.parseResponse(req, res) => Error|any, res.body is a string (browser) or a Buffer (node). Called with 2xx response codes
+  - "json" => Object (default)
+  - "raw" => Buffer (node) or string (browser)
+* @param {function|string?} opt.parseError(req, res) => Error, called with non-2xx response codes
+  - "json"
+  - "text"
 
 #### Browser-only options
 * @param {bool} opt.withCredentials Enable cross-origin cookies
@@ -75,10 +83,6 @@ myRequest({url})
 * @param {number?} opt.timeout (default: 60e3) Total time before giving up
 * @param {number?} opt.maxRedirects (default: 5)
 * @param {bool} opt.gzip Compress the request body
-
-#### Serializers & Parsers
-- See `lib/helpers.js#serializeJSON` for the default serializer implementation
-- See `lib/helpers.js#parseJSONResponse` for the default response parser
 
 #### AuthorizationAgent
 ```javascript
@@ -102,7 +106,7 @@ class AuthorizationAgent {
 
 #### Examples
 ```javascript
-import request, {RequestError, parseJSON} from '@cody-greene/request'
+import request, {Error as RequestError, parseJSON} from '@cody-greene/request'
 
 // Get a Google OAuth2 access token
 request({
@@ -116,7 +120,7 @@ request({
     client_secret: CLIENT_SECRET,
     grant_type: 'refresh_token'
   },
-  parseError: function parseGoogError(res) {
+  parseError: function parseGoogError(req, res) {
     // Every API is different so we need to to some extra work
     // to get a useful Error out of the response
     var payload = parseJSON(res.body)
