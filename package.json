@@ -4,7 +4,7 @@
   "license": "MIT",
   "repository": "cody-greene/node-request",
   "engines": {"node": ">=4.4.0", "npm": "^3.0.0"},
-  "main": "lib/index.js",
+  "main": "lib/node.js",
   "browser": "lib/browser.js",
   "files": ["lib/"],
   "eslintConfig": {

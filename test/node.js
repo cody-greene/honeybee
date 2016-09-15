@@ -1,7 +1,7 @@
 'use strict'
 const assert = require('assert')
 const zlib = require('zlib')
-const request = require('../lib/index')
+const request = require('../lib/node')
 const createMockServer = require('./mock/http')
 const commonTests = require('./common')
 let server = null
