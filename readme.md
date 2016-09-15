@@ -55,35 +55,35 @@ myRequest({url})
 ```
 
 #### Common options
-* @param {string} opt.url
-* @param {string?} opt.method GET, PUT, PATCH, POST, DELETE
-* @param {object?} opt.headers e.g. Content-Type, Request-Id
-* @param {object?} opt.body Encoded as one of util.CONTENT_TYPES
-* @param {object?} opt.query Will be serialized as the url query string
-* @param {number?} opt.low (default: 200) Initial retry delay in milliseconds
-* @param {number?} opt.high (default: 1000) Maximum retry delay between attempts
-* @param {number?} opt.total (default: 5) Number of connection attempts before giving up
-* @param {function|string?} opt.serialize(req) Should convert `req.body` to a string or Buffer for transport and set `req.headers['content-type']` as appropriate
+* `{string} opt.url`
+* `{string} opt.method` GET, PUT, PATCH, POST, DELETE
+* `{object} opt.headers` e.g. Content-Type, Request-Id
+* `{object} opt.body` Will be processed by `opt.serialize`
+* `{object} opt.query` Will be serialized as the url query string
+* `{number} opt.low` (default: 200) Initial retry delay in milliseconds
+* `{number} opt.high` (default: 1000) Maximum retry delay between attempts
+* `{number} opt.total` (default: 5) Number of connection attempts before giving up
+* `{function|string} opt.serialize(req)` Should convert `req.body` to a string or Buffer for transport and set `req.headers['content-type']` as appropriate
   - "json" => "application/json" (default)
   - "form" => "application/x-www-form-urlencoded"
   - "noop"
-* @param {function|string?} opt.parseResponse(req, res) => Error|any, res.body is a string (browser) or a Buffer (node). Called with 2xx response codes
+* `{function|string} opt.parseResponse(req, res) => Error|any` res.body is a string (browser) or a Buffer (node). Called with 2xx response codes
   - "json" => Object (default)
   - "raw" => Buffer (node) or string (browser)
-* @param {function|string?} opt.parseError(req, res) => Error, called with non-2xx response codes
+* `{function|string} opt.parseError(req, res) => Error` called with non-2xx response codes
   - "json"
   - "text"
 
 #### Browser-only options
-* @param {bool} opt.withCredentials Enable cross-origin cookies
-* @param {function?} opt.onProgress(percent) 0-50: upload, 50-100: download
+* `{bool} opt.withCredentials` Enable cross-origin cookies
+* `{function} opt.onProgress(percent)` 0-50: upload, 50-100: download
 
 #### Node-only options
-* @param {[AuthorizationAgent](#AuthorizationAgent)?} opt.auth
-* @param {number?} opt.timeout (default: 60e3) Total time before giving up
-* @param {number?} opt.maxRedirects (default: 5)
-* @param {bool} opt.gzip Compress the request body
-* @param {[http.Agent](https://nodejs.org/api/http.html#http_class_http_agent)?} opt.conn Configure your own connection agent
+* [`{AuthorizationAgent} opt.auth`](#AuthorizationAgent)
+* `{number} opt.timeout` (default: 60e3) Total time before giving up
+* `{number} opt.maxRedirects` (default: 5)
+* `{bool} opt.gzip` Compress the request body
+* [`{http.Agent} opt.conn`](https://nodejs.org/api/http.html#http_class_http_agent) Configure your own connection agent
 
 #### AuthorizationAgent
 ```javascript
