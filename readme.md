@@ -90,10 +90,11 @@ class AuthorizationAgent {
   /**
    * Called (once) in the event of a 401 statusCode
    * Use this to fetch a new access token for .toHeader()
+   * Supports both the node-callback style as well as a Promise
    * @function refresh(opt, done)
    * @param {object} req Current request options, including headers
    * @param {function} done(err)
-   * @return {function} abort()
+   * @return {function|Promise} abort()
    */
 
   /**

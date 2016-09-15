@@ -98,6 +98,30 @@ describe('node (unique)', function () {
     })
   })
 
+  it.only('AuthAgent#refresh() may return a promise', function (done) {
+    const expectedToken = '67890'
+    let activeToken = '12345'
+    let hits = 0
+    server.setHandler(function (req, res) {
+      hits += 1
+      res.send(req.headers.authorization === expectedToken ? 204 : 401)
+    })
+    request({
+      url: server.origin,
+      auth: {
+        toHeader(){ return activeToken },
+        refresh: () => {
+          activeToken = expectedToken
+          return Promise.resolve()
+        },
+      }
+    }, function (err) {
+      assert.ifError(err)
+      assert.equal(hits, 2)
+      done()
+    })
+  })
+
   it('follows 302 redirects', function (done) {
     let hits = 0
     server.setHandler(function (req, res) {
