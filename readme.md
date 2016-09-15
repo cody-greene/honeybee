@@ -83,6 +83,7 @@ myRequest({url})
 * @param {number?} opt.timeout (default: 60e3) Total time before giving up
 * @param {number?} opt.maxRedirects (default: 5)
 * @param {bool} opt.gzip Compress the request body
+* @param {[http.Agent](https://nodejs.org/api/http.html#http_class_http_agent)?} opt.conn Configure your own connection agent
 
 #### AuthorizationAgent
 ```javascript
