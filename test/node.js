@@ -98,7 +98,7 @@ describe('node (unique)', function () {
     })
   })
 
-  it.only('AuthAgent#refresh() may return a promise', function (done) {
+  it('AuthAgent#refresh() may return a promise', function (done) {
     const expectedToken = '67890'
     let activeToken = '12345'
     let hits = 0
