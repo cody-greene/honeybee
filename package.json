@@ -1,8 +1,8 @@
 {
-  "name": "@cody-greene/request",
+  "name": "honeybee",
   "version": "0.2.0",
   "license": "MIT",
-  "repository": "cody-greene/node-request",
+  "repository": "cody-greene/honeybee",
   "engines": {"node": ">=4.4.0", "npm": "^3.0.0"},
   "main": "lib/node.js",
   "browser": "lib/browser.js",

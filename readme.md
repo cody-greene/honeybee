@@ -1,6 +1,6 @@
 Minimal dependency http(s) library for node & modern browsers with:
-- exponential backoff/retry
-- configurable error parsing
+- exponential backoff/retry (on status code: 429, 502, 503, 504)
+- custom error parsing, define how to extract a message
 - [callback API](#callback-api)
 - [support for native Promises](#native-promises)
 - [support for bound Promise](#bound-promise)
@@ -13,7 +13,7 @@ Node support: v4.4+
 
 #### Callback API
 ```javascript
-const request = require('@cody-greene/request')
+const request = require('honeybee')
 let cancel = request({url}, function (err, res) {
   if (err) console.warn(err.statusCode, err.stack)
   else console.log(res)
@@ -26,7 +26,7 @@ cancel()
 
 #### Native Promises
 ```javascript
-import {withPromise as request} from '@cody-greene/request'
+import {withPromise as request} from 'honeybee'
 request({url})
   .then(res => console.log(res))
   .catch(err => console.warn(err.statusCode, err.stack))
@@ -35,7 +35,7 @@ request({url})
 #### Bound Promise
 ```javascript
 const Promise = require('bluebird')
-const request = require('@cody-greene/request').withBindings(Promise)
+const request = require('honeybee').withBindings(Promise)
 request({url})
   .then(res => console.log(res))
   .catch(err => console.warn(err.statusCode, err.stack))
@@ -45,13 +45,13 @@ request({url})
 #### Bound Defaults
 ```javascript
 // or withBindings(Promise, defaults)
-const myRequest = require('@cody-greene/request').withBindings({
+const request = require('honeybee').withBindings({
   low: 500,
   high: 2000,
   total: 3,
   parseError: parseMyErrorFormat
 })
-myRequest({url})
+request({url})
 ```
 
 #### Common options
@@ -108,7 +108,7 @@ class AuthorizationAgent {
 
 #### Examples
 ```javascript
-import request, {Error as RequestError, parseJSON} from '@cody-greene/request'
+import request, {Error as RequestError, parseJSON} from 'honeybee'
 
 // Get a Google OAuth2 access token
 request({
@@ -154,7 +154,7 @@ request({
 ```
 
 #### Standalone module
-Create a standalone UMD bundle (which exports to `window.request` as a last resort):
+Create a standalone UMD bundle (which exports to `window.honeybee` as a last resort):
 ```
-$ browserify -s request . | uglifyjs -cm >request-v1.0.0.min.js
+$ browserify -s honeybee . | uglifyjs -cm >honeybee-$(git describe --abbrev=0 --match 'v[0-9]*' --tags).min.js
 ```
