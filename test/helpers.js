@@ -23,6 +23,13 @@ describe('helpers.merge', function () {
       baz: true
     })
   })
+  it('ignores "undefined"', function () {
+    let actual = util.merge({x: 1, y: 2}, {x: undefined, y: 3})
+    assert.deepEqual(actual, {
+      x: 1,
+      y: 3
+    })
+  })
 })
 
 describe('helpers.mergeHeaders', function () {

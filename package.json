@@ -1,6 +1,6 @@
 {
   "name": "honeybee",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "repository": "cody-greene/honeybee",
   "engines": {"node": ">=4.4.0", "npm": "^3.0.0"},
