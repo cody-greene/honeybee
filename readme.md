@@ -4,12 +4,12 @@ Minimal dependency http(s) library for node & modern browsers with:
 - [callback API](#callback-api)
 - [support for native Promises](#native-promises)
 - [support for bound Promise](#bound-promise)
+- support for streams
 - cancellation
 - JSON by default
 - less than `7kb` (minified) when bundled for the browser
-
-Browser support: IE9+, with browserify/webpack
-Node support: v4.4+
+- browser support: IE9+, with browserify/webpack
+- node support: v4.4+
 
 #### Callback API
 ```javascript
@@ -57,7 +57,10 @@ request({url})
 #### Common options
 * `{string} opt.url`
 * `{string} opt.method` GET, PUT, PATCH, POST, DELETE
-* `{object} opt.headers` e.g. Content-Type, Request-Id
+* `{object} opt.headers` default values:
+  - `accept-encoding: 'gzip'`
+  - `accept: 'application/json'`
+  - `user-agent: 'honeybee/${VERSION} (github.com/cody-greene/honeybee)'`
 * `{object} opt.body` Will be processed by `opt.serialize`
 * `{object} opt.query` Will be serialized as the url query string
 * `{number} opt.low` (default: 200) Initial retry delay in milliseconds
@@ -79,7 +82,7 @@ request({url})
 * `{function} opt.onProgress(percent)` 0-50: upload, 50-100: download
 
 #### Node-only options
-* [`{AuthorizationAgent} opt.auth`](#AuthorizationAgent)
+* [`{AuthorizationAgent} opt.auth`](#authorizationagent)
 * `{number} opt.timeout` (default: 60e3) Total time before giving up
 * `{number} opt.maxRedirects` (default: 5)
 * `{bool} opt.gzip` Compress the request body
@@ -108,53 +111,74 @@ class AuthorizationAgent {
 
 #### Examples
 ```javascript
-import request, {Error as RequestError, parseJSON} from 'honeybee'
+const request = require('honeybee')
 
 // Get a Google OAuth2 access token
 request({
   method: 'POST',
   uri: 'https://www.googleapis.com/oauth2/v3/token',
-  // Encode the request as
   serialize: 'form',
   body: {
-    refresh_token: refreshToken,
-    client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET,
+    refresh_token: '...',
+    client_id: process.env.GOOG_OAUTH_CLIENT_ID,
+    client_secret: process.env.GOOG_OAUTH_CLIENT_SECRET,
     grant_type: 'refresh_token'
   },
-  parseError: function parseGoogError(req, res) {
+  parseError: (req, res) => {
     // Every API is different so we need to to some extra work
     // to get a useful Error out of the response
-    var payload = parseJSON(res.body)
+    var payload = request.parseJSON(res.body)
     var message  = payload && payload.error ? payload.error.message
       ? payload.error.message
       : payload.error
       : 'invalid JSON response'
-    return new RequestError(res.statusCode, message, res.constructor)
+    return new request.Error(res.statusCode, message)
   }
-}, function (err, creds) {
+}, (err, creds) => {
   // The response is JSON encoded and may be handled by the default parser
-  if (err) console.warn(err.stack)
+  if (err) console.warn(err.statusCode + ' ' + err.message)
   else console.log('Authorization: Bearer ' + creds.access_token)
 })
 
-// Custom serializer & response parser
-request({
-  method: 'POST',
-  url: 'http://localhost',
-  body: {foo: 1, bar: 2},
-  headers: {
-    'content-type': 'text/plain;charset=utf-8',
-    'accept': 'text/plain;charset=utf-8'
-  },
-  serialize: (req) => { req.body }
-  parseResponse: (res) => res.body,
-  parseError: (res) => new RequestError(res.statusCode, res.body)
-})
+// Pipe to or from a request stream!
+fs.createReadStream('avatar.png')
+  .on('error', console.log)
+  .pipe(request.withStream({
+    method: 'PUT',
+    url: 'https://api.example.com/files',
+    headers: {
+      authorization: 'Bearer 123456',
+      'content-type': 'image/png',
+    }
+  }))
+  .on('response', res => {
+    console.log(res.headers)
+  })
+  .on('error', (err, res) => {
+    console.log(res.statusCode + ' ' + err.message)
+    console.log(res.body.toString('utf8'))
+  })
+  .pipe(process.stdout)
 ```
+
+### Using the streaming API (node only)
+- Several options are disabled/irrelevant
+  - cancellation
+  - body
+  - low/high/total
+  - OAuth refresh on `401` response code
+  - serialize
+  - parseResponse
+  - gzip
+- `307` & `308` redirects are not supported since that would require holding the entire request body in memory
+- In the event of a non-2xx statusCode the response body will be fully buffered and pass through `parseError`. The result will be the first argument to `.on('error', (err, res) => ...)`
+- The stream is writable only with `POST`/`PUT`/`PATCH` requests.
+- As usual, if `X.pipe(Y)` and `X` emits an error then `Y` is not closed automatically. It is necessary to manually close each stream in order to prevent memory leaks.
 
 #### Standalone module
 Create a standalone UMD bundle (which exports to `window.honeybee` as a last resort):
 ```
-$ browserify -s honeybee . | uglifyjs -cm >honeybee-$(git describe --abbrev=0 --match 'v[0-9]*' --tags).min.js
+$ tag=$(git describe --abbrev=0 --match 'v[0-9]*' --tags)
+$ git checkout $tag
+$ browserify -s honeybee . | uglifyjs -cm >honeybee-$tag.min.js
 ```
