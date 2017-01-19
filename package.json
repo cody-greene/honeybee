@@ -1,6 +1,6 @@
 {
   "name": "honeybee",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "license": "MIT",
   "repository": "cody-greene/honeybee",
   "engines": {"node": ">=4.4.0", "npm": "^3.0.0"},
@@ -16,7 +16,7 @@
     "test": "mocha -bR tap"
   },
   "devDependencies": {
-    "@cody-greene/eslint-config": "2.13.0",
+    "@cody-greene/eslint-config": "3.3.1",
     "mocha": "^3.2.0"
   }
 }
