@@ -23,7 +23,7 @@ describe('node (unique)', function () {
     })
     request({url: server.origin}, function (err, res) {
       assert.ifError(err)
-      assert.deepStrictEqual(res, expected)
+      assert.deepStrictEqual(res.body, expected)
       done()
     })
   })

@@ -15,8 +15,8 @@ Minimal dependency http(s) library for node & modern browsers with:
 ```javascript
 const request = require('honeybee')
 let cancel = request({url}, function (err, res) {
-  if (err) console.warn(err.statusCode, err.stack)
-  else console.log(res)
+  if (err) console.warn(err.statusCode, res.headers, err.stack)
+  else console.log(res.body)
 })
 
 // Immediately abort the XHR or the node http request
@@ -28,16 +28,17 @@ cancel()
 ```javascript
 import {withPromise as request} from 'honeybee'
 request({url})
-  .then(res => console.log(res))
-  .catch(err => console.warn(err.statusCode, err.stack))
+  .then(res => console.log(res.body))
+  .catch(err => console.warn(err.statusCode, err.headers, err.stack))
 ```
+Note how headers are attached to the error object.
 
 #### Bound Promise
 ```javascript
 const Promise = require('bluebird')
 const request = require('honeybee').withBindings(Promise)
 request({url})
-  .then(res => console.log(res))
+  .then(res => console.log(res.body))
   .catch(err => console.warn(err.statusCode, err.stack))
   .cancel()
 ```
@@ -70,10 +71,10 @@ request({url})
   - "json" => "application/json" (default)
   - "form" => "application/x-www-form-urlencoded"
   - "noop"
-* `{function|string} opt.parseResponse(req, res) => Error|any` res.body is a string (browser) or a Buffer (node). Called with 2xx response codes
+* `{function|string} opt.parseResponse(req, res) => Error|any` Called with 2xx response codes. Should replace `res.body` or return an Error
   - "json" => Object (default)
   - "raw" => Buffer (node) or string (browser)
-* `{function|string} opt.parseError(req, res) => Error` called with non-2xx response codes
+* `{function|string} opt.parseError(req, res) => Error` Called with non-2xx response codes. Should extract a useful message from the response body and return an Error
   - "json"
   - "text"
 
@@ -134,10 +135,10 @@ request({
       : 'invalid JSON response'
     return new request.Error(res.statusCode, message)
   }
-}, (err, creds) => {
+}, (err, res) => {
   // The response is JSON encoded and may be handled by the default parser
   if (err) console.warn(err.statusCode + ' ' + err.message)
-  else console.log('Authorization: Bearer ' + creds.access_token)
+  else console.log('Authorization: Bearer ' + res.body.access_token)
 })
 
 // Pipe to or from a request stream!

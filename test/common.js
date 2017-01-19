@@ -18,7 +18,7 @@ module.exports = function declareWith(server, request) {
       body: expectedRequest
     }, function (err, res) {
       assert.ifError(err)
-      assert.deepStrictEqual(res, expectedResponse, 'parsed response data')
+      assert.deepStrictEqual(res.body, expectedResponse, 'parsed response data')
       done()
     })
   })
@@ -106,7 +106,7 @@ module.exports = function declareWith(server, request) {
       assert.equal(req.headers['content-length'], null)
       assert.equal(req.headers['request-id'], '2e2e2e', 'got user-defined header')
       assert.equal(req.headers['x-cursed-love'], 'Hexed Lust', 'header names are case insensitive')
-      res.send(204)
+      res.send(204, null, {'x-foo': 'dingus'})
     })
     request({
       url: server.origin,
@@ -114,7 +114,11 @@ module.exports = function declareWith(server, request) {
         'request-id': '2e2e2e',
         'X-Cursed-lOvE': 'Hexed Lust'
       }
-    }, done)
+    }, (err, res) => {
+      assert.equal(res.headers['x-foo'], 'dingus',
+        'can inspect response headers')
+      done(err)
+    })
   })
 
   it('supports custom serializers', function (done) {
@@ -142,16 +146,15 @@ module.exports = function declareWith(server, request) {
     request({
       url: server.origin,
       parseResponse: function (req, res) {
-        // TODO return Error
         assert.equal(typeof req.headers, 'object')
         assert.equal(res.statusCode, 200)
         assert.equal(res.headers['content-type'], 'text/plain;charset=utf-8')
         assert.equal(res.body.toString(), 'electric feel')
-        return 'oracular spectacular'
+        res.body = 'oracular spectacular'
       }
     }, function (err, res) {
       assert.ifError(err)
-      assert.equal(res, 'oracular spectacular')
+      assert.equal(res.body, 'oracular spectacular')
       done()
     })
   })
@@ -172,6 +175,15 @@ module.exports = function declareWith(server, request) {
     }, function (err) {
       assert.equal(err, expected)
       done()
+    })
+  })
+
+  it('promise API can see headers', function () {
+    server.setHandler(function (req, res) {
+      res.send(500, 'bad news', {'x-lawyerings': 'birdlaw'})
+    })
+    return request.withPromise({url: server.origin}).catch(err => {
+      assert.equal(err.headers['x-lawyerings'], 'birdlaw')
     })
   })
 }
