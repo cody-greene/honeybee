@@ -1,4 +1,6 @@
 # honeybee change log
+## 2017-04-26 v1.1.0
+- avoid retries on 502/504 status codes
 ## 2017-01-19 v1.0.0
 - add `.withStream()`
 - instead of providing only the response body, the `done` callback now provides headers too: `(err, {statusCode, headers, body}) => ...`

@@ -1,9 +1,9 @@
 Minimal dependency http(s) library for node & modern browsers with:
-- exponential backoff/retry (on status code: 429, 502, 503, 504)
+- exponential backoff/retry (on status code: 429, 503)
 - custom error parsing, define how to extract a message
 - [callback API](#callback-api)
 - [support for native Promises](#native-promises)
-- [support for bound Promise](#bound-promise)
+- [support for other Promise implementations](#bound-promise)
 - support for streams
 - cancellation
 - JSON by default
@@ -80,7 +80,7 @@ request({url})
 
 #### Browser-only options
 * `{bool} opt.withCredentials` Enable cross-origin cookies
-* `{function} opt.onProgress(percent)` 0-50: upload, 50-100: download
+* `{function} opt.onProgress(percent)` 0-49: upload, 50-99: download
 
 #### Node-only options
 * [`{AuthorizationAgent} opt.auth`](#authorizationagent)
@@ -96,17 +96,17 @@ class AuthorizationAgent {
    * Called (once) in the event of a 401 statusCode
    * Use this to fetch a new access token for .toHeader()
    * Supports both the node-callback style as well as a Promise
-   * @function refresh(opt, done)
    * @param {object} req Current request options, including headers
    * @param {function} done(err)
    * @return {function|Promise} abort()
    */
+   refresh(opt, done) {}
 
   /**
-   * @function toHeader()
    * @return {string|null} The "Authorization" header
    * @example => "Bearer 718b3f..."
    */
+   toHeader() {}
 }
 ```
 
