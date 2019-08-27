@@ -96,11 +96,13 @@ class AuthorizationAgent {
    * Called (once) in the event of a 401 statusCode
    * Use this to fetch a new access token for .toHeader()
    * Supports both the node-callback style as well as a Promise
+   * You can reject the promise, or call done(err), to cancel.
    * @param {object} req Current request options, including headers
+   * @param {Error} err The actual Error object
    * @param {function} done(err)
    * @return {function|Promise} abort()
    */
-   refresh(opt, done) {}
+   refresh(opt, err, done) {}
 
   /**
    * @return {string|null} The "Authorization" header
