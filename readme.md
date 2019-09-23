@@ -1,3 +1,5 @@
+View honeybee.flow.js for full API.
+
 Minimal dependency http(s) library for node & modern browsers with:
 - exponential backoff/retry (on status code: 429, 503)
 - custom error parsing, define how to extract a message
@@ -61,7 +63,6 @@ request({url})
 * `{object} opt.headers` default values:
   - `accept-encoding: 'gzip'`
   - `accept: 'application/json'`
-  - `user-agent: 'honeybee/${VERSION} (github.com/cody-greene/honeybee)'`
 * `{object} opt.body` Will be processed by `opt.serialize`
 * `{object} opt.query` Will be serialized as the url query string
 * `{number} opt.low` (default: 200) Initial retry delay in milliseconds
