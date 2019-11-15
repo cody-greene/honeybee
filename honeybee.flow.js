@@ -1,9 +1,9 @@
 /* eslint no-unused-vars: off */
 
 declare class honeybee$Error extends Error {
-  constructor(status?: number, msg?: string): void,
+  constructor(status: ?number, msg: ?string): void,
   statusCode: number,
-  headers: {[string]: string},
+  headers: {[string]: ?string},
   body: any,
 }
 
@@ -11,13 +11,13 @@ type honeybee$Req = {
   url: string,
   method: string,
   query?: ?Object,
-  headers: {[string]: string},
+  headers: {[string]: ?string},
   body?: any,
 }
 
 type honeybee$Response<T=any> = {
   statusCode: number,
-  headers: {[string]: string},
+  headers: {[string]: ?string},
   body: T
 }
 
@@ -29,10 +29,10 @@ interface honeybee$AuthorizationAgent {
 }
 
 type honeybee$Options = $ReadOnly<{
-  url: string,
-  method?: string,
-  query?: Object,
-  headers?: {[string]: string},
+  url?: string,
+  method?: ?string,
+  query?: ?{[string]: any},
+  headers?: ?{[string]: ?string},
   body?: any,
   low?: number,
   high?: number,
@@ -42,14 +42,12 @@ type honeybee$Options = $ReadOnly<{
   parseError?: 'json' | 'text' | (honeybee$Req, honeybee$Response<>) => Error,
   withCredentials?: ?bool,
   onProgress?: number => void,
-  auth?: honeybee$AuthorizationAgent,
+  auth?: ?honeybee$AuthorizationAgent,
   timeout?: number,
   maxRedirects?: number,
   gzip?: ?bool,
   conn?: http$Agent<>,
 }>
-
-type honeybee$Config = $ReadOnly<$Shape<honeybee$Options>>
 
 // As of 0.86.0 Flow does not explicitly support higher-kinded types
 // but we can get around that by using $Call<F, A>
@@ -63,17 +61,16 @@ declare module 'honeybee' {
   declare type Response<T=any> = honeybee$Response<T>
   declare type AuthorizationAgent = honeybee$AuthorizationAgent
   declare module.exports: {
-    (honeybee$Options, honeybee$Callback): () => void,
+    (Options, honeybee$Callback): () => void,
 
-    withStream: (honeybee$Options) => stream$Duplex,
-    withStreamBindings: (defaults: honeybee$Config) => honeybee$Config => stream$Duplex,
+    withStream: (Options) => stream$Duplex,
+    withStreamBindings: (defaults: Options) => Options => stream$Duplex,
 
     parseJSON: string => any,
-    withPromise: <P>(PromiseLike: Class<P>) => honeybee$Options => honeybee$Promise<P>,
+    withPromise: <P>(PromiseLike: Class<P>) => Options => honeybee$Promise<P>,
     withBindings:
-      & (<P>(PromiseLike: Class<P>, defaults: honeybee$Config) => honeybee$Config => honeybee$Promise<P>)
-      & (<P>(PromiseLike: Class<P>) => honeybee$Options => honeybee$Promise<P>)
-      & ((defaults: honeybee$Config) => (honeybee$Config, honeybee$Callback) => () => void),
+      & (<P>(PromiseLike: Class<P>, defaults: ?Options) => Options => honeybee$Promise<P>)
+      & ((defaults: Options) => (Options, honeybee$Callback) => () => void),
 
     Error: Class<honeybee$Error>,
   }
