@@ -11,10 +11,14 @@ before('serverSetup', done => {
   describe('node (common)', () => commonTests(server, request))
 })
 
+after(() => {
+  server.close()
+})
+
 describe('node (unique)', function () {
   it('supports gzipped responses', function (done) {
     const expected = {status: 'gzipped!'}
-    const buf = zlib.gzipSync(new Buffer(JSON.stringify(expected)))
+    const buf = zlib.gzipSync(Buffer.from(JSON.stringify(expected)))
     server.setHandler(function (req, res) {
       res.send(200, buf, {
         'content-type': 'application/json',
@@ -86,7 +90,8 @@ describe('node (unique)', function () {
       url: server.origin,
       auth: {
         toHeader(){ return activeToken },
-        refresh: (httpOptions, next) => process.nextTick(() => {
+        refresh: (httpOptions, err, next) => process.nextTick(() => {
+          assert(err instanceof Error)
           activeToken = expectedToken
           next()
         })

@@ -63,15 +63,16 @@ declare module 'honeybee' {
   declare module.exports: {
     (Options, honeybee$Callback): () => void,
 
+    withCallback: (Options, honeybee$Callback): () => void,
     withStream: (Options) => stream$Duplex,
     withStreamBindings: (defaults: Options) => Options => stream$Duplex,
 
     parseJSON: string => any,
-    withPromise: <P>(PromiseLike: Class<P>) => Options => honeybee$Promise<P>,
+    withPromise: Options => honeybee$Promise<P>,
     withBindings:
       & (<P>(PromiseLike: Class<P>, defaults: ?Options) => Options => honeybee$Promise<P>)
       & ((defaults: Options) => (Options, honeybee$Callback) => () => void),
 
-    Error: Class<honeybee$Error>,
+    RequestError: Class<honeybee$Error>,
   }
 }

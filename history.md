@@ -1,4 +1,13 @@
 # honeybee change log
+## 2021-02-04 v2.0.0
+- BREAKING: `AuthorizationAgent#refresh()` is passed an Error object
+- BREAKING: rename exported class, `Error -> RequestError`
+- BREAKING: does not attempt to strip null/false values from JSON requests
+- add `withCallback(Options, cb)`
+- switch to a slightly more permissive license (yes, better than MIT even)
+- no more warnings about npm version
+- add flow type definition
+- add typescript definition
 ## 2017-04-26 v1.1.0
 - avoid retries on 502/504 status codes
 ## 2017-01-19 v1.0.0

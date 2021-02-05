@@ -57,7 +57,9 @@ MockXMLHttpRequest.prototype.getAllResponseHeaders = function () {
 
 MockXMLHttpRequest.prototype.abort = function () {
   this.isCancelled = true
-  this.onabort()
+  if (this.onabort != null) {
+    this.onabort()
+  }
 }
 
 global.XMLHttpRequest = MockXMLHttpRequest

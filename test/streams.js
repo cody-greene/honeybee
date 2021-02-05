@@ -9,6 +9,10 @@ before('serverSetup', done => {
   server = createMockServer(done)
 })
 
+after(() => {
+  server.close()
+})
+
 describe('node (streaming)', function () {
   it('returns a Readable stream', done => {
     server.setHandler((req, res) => {
