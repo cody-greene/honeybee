@@ -23,13 +23,6 @@ declare module 'honeybee' {
 		body: T
 	}
 
-	export interface AuthorizationAgent {
-		toHeader(): string|undefined|null
-		refresh:
-			& ((req:Req, err:Error) => PromiseLike<void>)
-			& ((req:Req, err:Error, done: ((err: Error|undefined|null) => void)) => void)
-	}
-
 	// readonly
 	export type Options = {
 		url?: string,
@@ -45,19 +38,12 @@ declare module 'honeybee' {
 		parseError?: 'json' | 'text' | ((req:Req, res:Response<any>) => Error),
 		withCredentials?: boolean,
 		onProgress?: (pc: number) => void,
-		auth?: AuthorizationAgent,
-		timeout?: number,
-		maxRedirects?: number,
-		gzip?: boolean,
-		conn?: HttpAgent,
 	}
 
 	type HoneybeeCallback = (err: RequestError|undefined|null, res: Response<any>) => void
 
 	export function withCallback(opt: Options, cb: HoneybeeCallback): () => void
 	export default withCallback
-	export function withStream(opt: Options): Duplex
-  export function withStreamBindings(defaults: Options): (opt: Options) => Duplex
   export function parseJSON(str: string): any
 	export function withPromise(opt: Options): Promise<Response<any>>
 

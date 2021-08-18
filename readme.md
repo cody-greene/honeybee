@@ -1,4 +1,4 @@
-View honeybee.flow.js for full API.
+View lib/node.d.ts for full API.
 
 Minimal dependency http(s) library for node & modern browsers with:
 - exponential backoff/retry (on status code: 429, 503)
