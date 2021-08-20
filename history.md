@@ -1,4 +1,8 @@
 # honeybee change log
+## 2021-08-18 v2.0.2
+- refactor: include typescript def in release pkg
+- fix: 304 not modified is no longer and error - wow
+
 ## 2021-02-04 v2.0.0
 - BREAKING: `AuthorizationAgent#refresh()` is passed an Error object
 - BREAKING: rename exported class, `Error -> RequestError`
