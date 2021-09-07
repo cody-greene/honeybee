@@ -3,10 +3,11 @@ declare module 'honeybee' {
 	import type {Agent as HttpAgent} from 'http'
 
 	export class RequestError extends Error {
-		constructor(status?: number, msg?: string)
+		constructor(status?: number, msg?: string, props?: Record<string, unknown>)
 		statusCode: number
 		headers: {[key:string]: string|undefined}
 		body: any
+    [k: string]: any
 	}
 
 	export type Req = {

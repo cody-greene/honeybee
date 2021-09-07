@@ -1,4 +1,7 @@
 # honeybee change log
+## 2021-09-06 v2.0.3
+- add "props" argument to RequestError
+
 ## 2021-08-18 v2.0.2
 - refactor: include typescript def in release pkg
 - fix: 304 not modified is no longer and error - wow
