@@ -1,5 +1,5 @@
 # honeybee change log
-## 2021-09-06 v2.0.3
+## 2021-09-06 v2.0.4
 - add "props" argument to RequestError
 
 ## 2021-08-18 v2.0.2
