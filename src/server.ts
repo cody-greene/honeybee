@@ -78,6 +78,17 @@ export interface Options<RequestBody=any, ResponseBody=any> {
   /** Milliseconds a request can take before automatically being terminated */
   timeout?: number
 
+  /**
+   * TODO When uploading large files, this will be called periodically with pct as a
+   * whole number between [0, 100]
+   */
+  //onUploadProgress?: ProgressCallback,
+  /**
+   * When downloading large files, this will be called periodically with pct as a
+   * whole number between [0, 100]
+   */
+  onDownloadProgress?: ProgressCallback,
+
   /** (default=5) server-only */
   maxRedirects?: number
   /**
@@ -95,6 +106,8 @@ export class RedirectError extends Error {
     this.headers = res.headers
   }
 }
+
+type ProgressCallback = (pct: number, bytesWritten: number, bytesExpected: number) => void
 
 const OPT_DEFAULTS = {
   retryAfterMax: 30e3,
@@ -155,6 +168,33 @@ export default function request<T=any, R=any>(options: string|Options<T, R>): Pr
   return perform(url, opt, 1, 0)
 }
 
+/**
+ * A passthrough Stream, with a callback for monitoring bytes transferred
+ */
+class ProgressMonitor extends stream.Transform {
+  private bytesExpected: number
+  private bytesWritten: number
+  private onProgress: ProgressCallback
+  private prev: number
+  constructor(bytesExpected: number, onProgress: ProgressCallback) {
+    // If highWaterMark is left to default, then this will buffer data instead
+    // of mirroring the downstream backpressure, leading to inaccurate updates.
+    super({highWaterMark: 1})
+    this.bytesExpected = bytesExpected
+    this.bytesWritten = 0
+    this.onProgress = onProgress
+    this.prev = 0
+  }
+  _transform(chunk: Buffer, _enc: unknown, cb: stream.TransformCallback) {
+    this.bytesWritten += chunk.byteLength
+    const pct = Math.floor(this.bytesWritten / this.bytesExpected * 100)
+    if (pct !== this.prev)
+      this.onProgress(pct, this.bytesWritten, this.bytesExpected)
+    this.prev = pct
+    cb(null, chunk)
+  }
+}
+
 function perform(url: URL, opt: MergedOptions, attempts: number, redirectAttempts: number): Promise<HoneybeeResponse> {
   return new Promise((resolve, reject) => {
     const request = agnosticRequest(url, opt)
@@ -188,8 +228,10 @@ function perform(url: URL, opt: MergedOptions, attempts: number, redirectAttempt
       }
       response.on('error', (err: any) => reject(new NetError(err.message, err.code)))
       response.resume() // Make sure we drain any data even if unused
+
       if (res.status === 204)
         return resolve(res)
+
       if (WEIRD_REDIRECT_CODES.includes(res.status)) {
         // Regardless of the original HTTP verb, these redirects should use GET
         // (by design or de facto implementation)
@@ -205,9 +247,16 @@ function perform(url: URL, opt: MergedOptions, attempts: number, redirectAttempt
         const target = new URL(res.headers.get('Location')!, url)
         return resolve(perform(target, opt, attempts, redirectAttempts + 1))
       }
+
+      let responseData: stream.Readable = response
+      if (opt.onDownloadProgress) {
+        const bytesExpected = parseInt(String(headers.get('Content-Length')), 10)
+        responseData = response.pipe(new ProgressMonitor(bytesExpected, opt.onDownloadProgress))
+        response.on('error', () => responseData.destroy())
+      }
       let chunks: Array<Buffer> = []
-      response.on('data', (chunk) => { chunks.push(chunk) })
-      response.on('end', ()=> {
+      responseData.on('data', (chunk) => { chunks.push(chunk) })
+      responseData.on('end', ()=> {
         if (!response.complete) {
           return reject(new NetError('Connection ended prematurely'))
         }
@@ -269,33 +318,4 @@ function parseHeaders(raw: http.IncomingHttpHeaders): [HeaderMap, Cookies] {
     }
   }
   return [headers, cookies]
-}
-
-type ProgressCallback = (pct: number) => void
-
-/**
- * A passthrough Stream, with a callback for monitoring bytes transferred
- */
-class ProgressMonitor extends stream.Transform {
-  private bytesExpected: number
-  private bytesWritten: number
-  private onProgress: ProgressCallback
-  private prev: number
-  constructor(bytesExpected: number, onProgress: ProgressCallback) {
-    // If highWaterMark is left to default, then this will buffer data instead
-    // of mirroring the downstream backpressure, leading to inaccurate updates.
-    super({highWaterMark: 1})
-    this.bytesExpected = bytesExpected
-    this.bytesWritten = 0
-    this.onProgress = onProgress
-    this.prev = 0
-  }
-  _transform(chunk: Buffer, _enc: unknown, cb: stream.TransformCallback) {
-    this.bytesWritten += chunk.byteLength
-    const pct = Math.floor(this.bytesWritten / this.bytesExpected * 100)
-    if (pct !== this.prev)
-      this.onProgress(pct)
-    this.prev = pct
-    cb(null, chunk)
-  }
 }

@@ -71,13 +71,15 @@ export interface Options<RequestBody=any, ResponseBody=any> {
    * browser-only. When uploading large files, this will be called periodically with pct as a
    * whole number between [0, 100]
    */
-  onUploadProgress?: (pct: number) => void,
+  onUploadProgress?: ProgressCallback,
   /**
-   * browser-only. When downloading large files, this will be called periodically with pct as a
+   * When downloading large files, this will be called periodically with pct as a
    * whole number between [0, 100]
    */
-  onDownloadProgress?: (pct: number) => void,
+  onDownloadProgress?: ProgressCallback,
 }
+
+type ProgressCallback = (pct: number, bytesWritten: number, bytesExpected: number) => void
 
 const OPT_DEFAULTS = {
   retryAfterMax: 30e3,
@@ -168,14 +170,14 @@ function perform(url: string, opt: MergedOptions, attempts: number): Promise<Hon
     if (onUploadProgress && xhr.upload) {
       xhr.upload.onprogress = (evt) => {
         if (evt.lengthComputable)
-          onUploadProgress(Math.floor(evt.loaded / evt.total * 100))
+          onUploadProgress(Math.floor(evt.loaded / evt.total * 100), evt.loaded, evt.total)
       }
     }
     const onDownloadProgress = opt.onDownloadProgress
     if (onDownloadProgress) {
       xhr.onprogress = (evt) => {
         if (evt.lengthComputable)
-          onDownloadProgress(Math.floor(evt.loaded / evt.total * 100))
+          onDownloadProgress(Math.floor(evt.loaded / evt.total * 100), evt.loaded, evt.total)
       }
     }
     xhr.ontimeout = () => {

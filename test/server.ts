@@ -365,7 +365,7 @@ it('handles relative redirects', async (assert) => {
   assert.plan(3)
 })
 
-it('handles mehtod altering redirects', async (assert) => {
+it('handles method altering redirects', async (assert) => {
   useNock(assert)
     .post('/left').reply(function () {
       return [303, null, {Location: '/right'}]
@@ -379,3 +379,7 @@ it('handles mehtod altering redirects', async (assert) => {
 
   assert.plan(1)
 })
+
+it.skip('supports onDownloadProgress', async (assert) => {})
+
+it.skip('supports onUploadProgress', async (assert) => {})

@@ -353,7 +353,9 @@ it('retries on 429 status (with Retry-After)', async (assert) => {
   assert.plan(4)
 })
 
-it('onDownloadProgress', async (assert) => {
+it.skip('supports onDownloadProgress', async (assert) => {})
+
+it('supports onUploadProgress', async (assert) => {
   const server = useMockServer(assert)
   const reqBody = new Uint8Array(16) // 16 bytes
   server.addHandler('POST', ORIGIN+'/upload', (xhr) => {
