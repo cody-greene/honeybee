@@ -1,24 +1,30 @@
 {
   "name": "honeybee",
-  "version": "2.0.5",
+  "version": "3.0.0",
   "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cody-greene/honeybe.git"
   },
-  "main": "lib/node.js",
-  "browser": "lib/browser.js",
-  "files": ["lib/"],
-  "eslintConfig": {
-    "root": true,
-    "extends": "./node_modules/@cody-greene/eslint-config/strict.yml"
-  },
+  "main": "lib/dom.js",
+  "files": [
+    "lib/"
+  ],
   "scripts": {
-    "test-watch": "mocha -bwR min",
-    "test": "mocha -bR tap"
+    "prepare": "tsc -p tsconfig.build.json",
+    "test": "tape -r ts-node/register test/*.ts"
   },
   "devDependencies": {
-    "@cody-greene/eslint-config": "3.3.1",
-    "mocha": "^5.0.0"
+    "@cody-greene/eslint-config": "^3.3.0",
+    "@types/node": "^16.11.22",
+    "@types/tape": "^4.13.0",
+    "@typescript-eslint/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/parser": "^5.9.0",
+    "eslint": "^8.6.0",
+    "mock-xmlhttprequest": "~7.0.0",
+    "nock": "~13.1.0",
+    "tape": "^5.3.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.0"
   }
 }

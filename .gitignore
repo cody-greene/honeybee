@@ -1,4 +1,5 @@
 *.log
 .DS_Store
+/lib
 /node_modules
 /package-lock.json

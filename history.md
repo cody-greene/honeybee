@@ -1,4 +1,7 @@
 # honeybee change log
+## 2022-02-xx v3.0.0
+*BREAKING CHANGE* Nearly everything has changed. Rewrote most of this to use promises only, changed or renamed most options, etc.
+
 ## 2021-09-29 v2.0.5
 - fix RequestError
 
