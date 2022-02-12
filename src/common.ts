@@ -10,7 +10,7 @@ export interface HoneybeeResponse<T=any> {
   body: T
 }
 export interface QueryParams {
-  [key:string]: string|number|Array<string|number>
+  [key:string]: undefined|string|number|Array<string|number>
 }
 
 export class ResponseError<T=any> extends Error {
@@ -20,6 +20,7 @@ export class ResponseError<T=any> extends Error {
 
   constructor(message: string, res: HoneybeeResponse<T>) {
     super(message)
+    this.name = 'ResponseError'
     this.status = res.status
     this.headers = res.headers
     this.body = res.body
@@ -29,14 +30,20 @@ export class ResponseError<T=any> extends Error {
 export class TimeoutError extends Error {
   constructor() {
     super('Request timed out')
+    this.name = 'TimeoutError'
   }
 }
 export class NetError extends Error {
   code?: string
   constructor(message: string, code?: string) {
     super(message)
+    this.name = 'NetError'
     this.code = code
   }
+}
+
+export interface ProgressCallback {
+  (pct: number, bytesWritten: number, bytesExpected: number): void
 }
 
 const SINGLE_HEADERS = [

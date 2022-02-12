@@ -5,7 +5,8 @@ Zero dependency http(s) library for node & modern browsers with:
 
 #### Examples
 ```javascript
-import request from 'honeybee'
+//import request from 'honeybee/dom'
+import request from 'honeybee/server'
 
 // Get a Google OAuth2 access token
 const res = await request({

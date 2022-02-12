@@ -3,6 +3,7 @@ import {
   HoneybeeRequest,
   HoneybeeResponse,
   NetError,
+  ProgressCallback,
   QueryParams,
   ResponseError,
   TimeoutError,
@@ -13,7 +14,22 @@ import {
   setQueryParams,
 } from './common'
 
-export interface Options<RequestBody=any, ResponseBody=any> {
+export type {
+  HoneybeeRequest,
+  HoneybeeResponse,
+  Options,
+  ProgressCallback,
+  QueryParams,
+}
+export {
+  HeaderMap,
+  NetError,
+  ResponseError,
+  TimeoutError,
+  request as default
+}
+
+interface Options<RequestBody=any, ResponseBody=any> {
   url: string,
   method?: string,
   /**
@@ -79,8 +95,6 @@ export interface Options<RequestBody=any, ResponseBody=any> {
   onDownloadProgress?: ProgressCallback,
 }
 
-type ProgressCallback = (pct: number, bytesWritten: number, bytesExpected: number) => void
-
 const OPT_DEFAULTS = {
   retryAfterMax: 30e3,
   retryDelayJitter: 100,
@@ -92,7 +106,7 @@ const OPT_DEFAULTS = {
 }
 type MergedOptions = typeof OPT_DEFAULTS & Omit<Options, 'headers'> & {headers: HeaderMap}
 
-export default function request<T=any, R=any>(options: string|Options<T, R>): Promise<HoneybeeResponse<R>> {
+function request<T=any, R=any>(options: string|Options<T, R>): Promise<HoneybeeResponse<R>> {
   const opt: MergedOptions = mergeDefaults(OPT_DEFAULTS, typeof options == 'string' ? {url: options} : options) as any
   opt.headers = new HeaderMap(opt.headers && Object.entries(opt.headers))
   const req: HoneybeeRequest = {headers: opt.headers}

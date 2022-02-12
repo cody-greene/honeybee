@@ -6,6 +6,7 @@ import {
   HoneybeeRequest,
   HoneybeeResponse,
   NetError,
+  ProgressCallback,
   QueryParams,
   ResponseError,
   TimeoutError,
@@ -16,6 +17,22 @@ import {
   setQueryParams,
 } from './common'
 
+export type {
+  HoneybeeRequest,
+  HoneybeeResponse,
+  Options,
+  ProgressCallback,
+  QueryParams,
+}
+export {
+  HeaderMap,
+  NetError,
+  RedirectError,
+  ResponseError,
+  TimeoutError,
+  request as default
+}
+
 const PKG = require('../package.json')
 const USER_AGENT_HEADER = `${PKG.name}/${PKG.version} (nodejs)`
 
@@ -23,7 +40,7 @@ const USER_AGENT_HEADER = `${PKG.name}/${PKG.version} (nodejs)`
 const WEIRD_REDIRECT_CODES = [301, 302, 303]
 const REDIRECT_CODES = [...WEIRD_REDIRECT_CODES, 307, 308]
 
-export interface Options<RequestBody=any, ResponseBody=any> {
+interface Options<RequestBody=any, ResponseBody=any> {
   url: string
   method?: string
   /**
@@ -98,16 +115,15 @@ export interface Options<RequestBody=any, ResponseBody=any> {
   agent?: http.Agent | https.Agent
 }
 
-export class RedirectError extends Error {
+class RedirectError extends Error {
   headers: HeaderMap
 
   constructor(message: string, res: HoneybeeResponse) {
     super(message)
+    this.name = 'RedirectError'
     this.headers = res.headers
   }
 }
-
-type ProgressCallback = (pct: number, bytesWritten: number, bytesExpected: number) => void
 
 const OPT_DEFAULTS = {
   retryAfterMax: 30e3,
@@ -121,7 +137,7 @@ const OPT_DEFAULTS = {
 }
 type MergedOptions = typeof OPT_DEFAULTS & Omit<Options, 'headers'> & {headers: HeaderMap}
 
-export default function request<T=any, R=any>(options: string|Options<T, R>): Promise<HoneybeeResponse<R>> {
+function request<T=any, R=any>(options: string|Options<T, R>): Promise<HoneybeeResponse<R>> {
   const opt: MergedOptions = mergeDefaults(OPT_DEFAULTS, typeof options == 'string' ? {url: options} : options) as any
   opt.headers = new HeaderMap(opt.headers && Object.entries(opt.headers))
   const req: HoneybeeRequest = {headers: opt.headers}

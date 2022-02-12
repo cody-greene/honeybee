@@ -4,9 +4,18 @@
   "license": "Unlicense",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cody-greene/honeybe.git"
+    "url": "https://github.com/cody-greene/honeybee.git"
   },
-  "main": "lib/dom.js",
+  "exports": {
+    "./dom": "./lib/dom.js",
+    "./server": "./lib/server.js"
+  },
+  "typesVersions": {
+    "*": {
+      "dom": ["lib/dom.d.ts"],
+      "server": ["lib/server.d.ts"]
+    }
+  },
   "files": [
     "lib/"
   ],
