@@ -1,6 +1,6 @@
 {
   "name": "honeybee",
-  "version": "3.0.0-beta.1",
+  "version": "3.0.0",
   "license": "Unlicense",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "lib/"
   ],
   "scripts": {
-    "prepare": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "tsc -p tsconfig.build.json",
     "test": "tape -r ts-node/register test/*.ts"
   },
   "devDependencies": {

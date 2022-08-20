@@ -39,6 +39,5 @@
     "@typescript-eslint/quotes": ["warn", "single", "avoid-escape"],
     "@typescript-eslint/semi": ["warn", "never"],
     "@typescript-eslint/space-before-function-paren": ["warn", {"anonymous": "always", "named": "never"}]
-  },
-  "globals": {"JSX": "readonly"}
+  }
 }
